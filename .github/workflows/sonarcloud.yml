@@ -23,7 +23,8 @@ jobs:
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: |
-          mvn -B verify -Ptest org.sonarsource.scanner.maven:sonar-maven-plugin:sonar \
+          mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar \
+            -Dspring.profiles.active=test \
             -Dsonar.projectKey=benitonzonlia-techLead_BibliaMood \
             -Dsonar.organization=benitonzonlia-techlead \
             -Dsonar.host.url=https://sonarcloud.io \
