@@ -1,0 +1,17 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/bibliamood
+    username: postgres
+    password: root
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+  batch:
+    jdbc:
+      initialize-schema: always
+
+logging:
+  level:
+    org.springframework.batch: INFO
