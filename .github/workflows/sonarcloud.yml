@@ -2,7 +2,8 @@ name: SonarCloud Analysis
 
 on:
   pull_request:
-    branches: [ develop ]
+    branches: [ develop, master ]
+  workflow_dispatch:  
 
 jobs:
   sonarcloud:
