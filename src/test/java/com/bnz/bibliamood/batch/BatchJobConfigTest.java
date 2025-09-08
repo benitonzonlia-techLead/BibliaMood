@@ -10,7 +10,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SpringBootTest
 @SpringBatchTest
-public class BatchJobConfigTest {
+class BatchJobConfigTest {
     @Autowired
     private JobLauncher jobLauncher;
 
