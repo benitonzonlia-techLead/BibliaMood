@@ -14,7 +14,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.transaction.PlatformTransactionManager;
 
 @Configuration
-public class BatchJobConfig {
+class BatchJobConfig {
 
     private static final Logger logger = LoggerFactory.getLogger(BatchJobConfig.class);
 
