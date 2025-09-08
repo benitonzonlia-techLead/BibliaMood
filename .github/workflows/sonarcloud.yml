@@ -20,7 +20,7 @@ jobs:
 
       - name: SonarCloud Scan
         uses: SonarSource/sonarcloud-github-action@v2
-        with:
-          projectKey: benitonzonlia-techLead_BibliaMood
-          organization: benitonzonlia-techlead
-          token: ${{ secrets.SONAR_TOKEN }}
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_PROJECT_KEY: benitonzonlia-techLead_BibliaMood
+          SONAR_ORGANIZATION: benitonzonlia-techlead
