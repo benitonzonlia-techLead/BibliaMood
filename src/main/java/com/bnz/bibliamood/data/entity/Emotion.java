@@ -14,8 +14,14 @@ public class Emotion {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(nullable = false, unique = true, length = 30)
+    private String code; // ex: JOY, PEACE, etc.
+
     @Column(nullable = false, length = 100)
-    private String name;
+    private String nameFr; // nom français
+
+    @Column(length = 100)
+    private String nameEn; // nom anglais
 
     private String description;
 
