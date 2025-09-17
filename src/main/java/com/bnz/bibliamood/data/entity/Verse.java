@@ -14,19 +14,26 @@ public class Verse {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false, length = 100)
+
+    @Column(name = "book_code", length = 10)
+    private String bookCode;
+
+    @Column(length = 100)
     private String book;
 
-    @Column(nullable = false)
+    @Column(name = "book_number")
+    private Integer bookNumber;
+
+    @Column()
     private Integer chapter;
 
-    @Column(name = "verse_number", nullable = false)
+    @Column(name = "verse_number")
     private Integer verseNumber;
 
-    @Column(nullable = false, length = 2000)
+    @Column(length = 2000)
     private String text;
 
-    @Column(nullable = false, length = 10)
+    @Column(length = 10)
     private String language; // 'fr' ou 'en'
 
     @Column(length = 20)
