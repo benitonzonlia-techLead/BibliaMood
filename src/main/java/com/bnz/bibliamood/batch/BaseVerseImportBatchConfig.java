@@ -45,7 +45,7 @@ public abstract class BaseVerseImportBatchConfig {
             try (CSVParser parser = CSVParser.parse(line, format)) {
                 rec = parser.iterator().next();
             } catch (Exception e) {
-                throw new BibliaMoodException("Invalid CSV format at line " + lineNumber);
+                throw new BibliaMoodException("Error parsing CSV at line " + lineNumber);
             }
 
             if (rec.size() < 6) {
