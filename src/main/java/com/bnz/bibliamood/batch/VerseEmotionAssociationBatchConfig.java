@@ -58,6 +58,32 @@ public class VerseEmotionAssociationBatchConfig {
         return verse -> verse;
     }
 
+    private void addEmotionIfValid(Verse verse, java.util.Map.Entry<String, Double> entry, double threshold, java.util.List<VerseEmotion> toSave) {
+        String code = entry.getKey();
+        double score = entry.getValue();
+        if (score < threshold) return;
+        Emotion emotion = emotionRepository.findByCode(code).orElse(null);
+        if (emotion == null) return;
+        if (verseEmotionRepository.existsByVerseAndEmotion(verse, emotion)) return;
+        toSave.add(VerseEmotion.builder().verse(verse).emotion(emotion).score(score).build());
+    }
+
+    private void processVerseEmotions(Verse verse, int k, double th) {
+        java.util.Map<String, Double> top;
+        try {
+            top = emotionAnalyzerService.analyzeTop(verse.getText(), verse.getLanguage(), k);
+        } catch (Exception e) {
+            return; // skip sur erreur modèle
+        }
+        java.util.List<VerseEmotion> toSave = new java.util.ArrayList<>();
+        for (java.util.Map.Entry<String, Double> entry : top.entrySet()) {
+            addEmotionIfValid(verse, entry, th, toSave);
+        }
+        if (!toSave.isEmpty()) {
+            verseEmotionRepository.saveAll(toSave);
+        }
+    }
+
     @Bean
     @StepScope
     public ItemWriter<Verse> verseEmotionWriter(
@@ -68,25 +94,7 @@ public class VerseEmotionAssociationBatchConfig {
         double th = threshold == null ? 0.35 : threshold;
         return items -> {
             for (Verse verse : items) {
-                java.util.Map<String, Double> top;
-                try {
-                    top = emotionAnalyzerService.analyzeTop(verse.getText(), verse.getLanguage(), k);
-                } catch (Exception e) {
-                    continue; // skip sur erreur modèle
-                }
-                java.util.List<VerseEmotion> toSave = new java.util.ArrayList<>();
-                for (java.util.Map.Entry<String, Double> e : top.entrySet()) {
-                    String code = e.getKey();
-                    double score = e.getValue();
-                    if (score < th) continue;
-                    Emotion emotion = emotionRepository.findByCode(code).orElse(null);
-                    if (emotion == null) continue;
-                    if (verseEmotionRepository.existsByVerseAndEmotion(verse, emotion)) continue;
-                    toSave.add(VerseEmotion.builder().verse(verse).emotion(emotion).score(score).build());
-                }
-                if (!toSave.isEmpty()) {
-                    verseEmotionRepository.saveAll(toSave);
-                }
+                processVerseEmotions(verse, k, th);
             }
         };
     }

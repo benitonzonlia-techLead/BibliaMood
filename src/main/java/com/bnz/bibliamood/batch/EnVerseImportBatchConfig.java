@@ -4,9 +4,6 @@ import com.bnz.bibliamood.data.entity.Verse;
 import com.bnz.bibliamood.data.repository.VerseRepository;
 import com.bnz.bibliamood.util.BibleMappings;
 import lombok.RequiredArgsConstructor;
-import org.apache.commons.csv.CSVFormat;
-import org.apache.commons.csv.CSVParser;
-import org.apache.commons.csv.CSVRecord;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.job.builder.JobBuilder;
@@ -16,15 +13,10 @@ import org.springframework.batch.core.step.builder.StepBuilder;
 import org.springframework.batch.item.ItemProcessor;
 import org.springframework.batch.item.data.RepositoryItemWriter;
 import org.springframework.batch.item.file.FlatFileItemReader;
-import org.springframework.batch.item.file.LineMapper;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.transaction.PlatformTransactionManager;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
 
 @Configuration
 @RequiredArgsConstructor
@@ -33,7 +25,7 @@ public class EnVerseImportBatchConfig extends BaseVerseImportBatchConfig {
     private final VerseRepository verseRepository;
 
 
-    @Bean(name = "EnVerseItemReader")
+    @Bean(name = "enVerseItemReader")
     public FlatFileItemReader<Verse> verseItemReader() {
         return createReader("bible_csv/kjv_strongs.csv", createVerseLineMapper());
     }

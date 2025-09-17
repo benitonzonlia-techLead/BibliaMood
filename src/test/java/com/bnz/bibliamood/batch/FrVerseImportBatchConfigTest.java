@@ -55,7 +55,7 @@ class FrVerseImportBatchConfigTest {
         assertThat(execution.getExitStatus().getExitCode()).isEqualTo("COMPLETED");
         List<Verse> verses = verseRepository.findAll();
         // 1. Vérifier le nombre total de versets (environ 31102 pour la Bible complète)
-        assertThat(verses.size()).isEqualTo(31102);
+        assertThat(verses).hasSize(31102);
 
         // 2. Vérifier la totalité des champs mappés sur quelques versets
         for (Verse v : verses.subList(0, Math.min(10, verses.size()))) {
@@ -81,7 +81,7 @@ class FrVerseImportBatchConfigTest {
     }
 
     @Test
-    void testFrVerseProcessor() throws Exception {
+    void testFrVerseProcessor() {
         Verse input = new Verse();
         input.setBook("Genèse");
         input.setBookNumber(1);

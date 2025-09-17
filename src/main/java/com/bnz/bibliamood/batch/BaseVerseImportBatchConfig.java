@@ -40,19 +40,19 @@ public abstract class BaseVerseImportBatchConfig {
                     .setTrim(true)
                     .build();
 
-            CSVRecord record;
+            CSVRecord rec;
             try (CSVParser parser = CSVParser.parse(line, format)) {
-                record = parser.iterator().next();
+                rec = parser.iterator().next();
             } catch (Exception e) {
                 throw new RuntimeException("Error parsing CSV at line " + lineNumber, e);
             }
 
-            if (record.size() < 6) {
+            if (rec.size() < 6) {
                 throw new IllegalArgumentException("Invalid CSV format: insufficient columns at line " + lineNumber);
             }
 
             List<String> cols = new ArrayList<>();
-            record.forEach(cols::add);
+            rec.forEach(cols::add);
 
             Verse verse = new Verse();
             verse.setBook(cols.get(1));

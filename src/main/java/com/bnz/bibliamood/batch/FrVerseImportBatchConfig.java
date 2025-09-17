@@ -24,7 +24,7 @@ public class FrVerseImportBatchConfig extends BaseVerseImportBatchConfig {
 
     private final VerseRepository verseRepository;
 
-    @Bean(name = "FrVerseItemReader")
+    @Bean(name = "frVerseItemReader")
     public FlatFileItemReader<Verse> verseItemReader() {
         return createReader("bible_csv/segond_1910.csv", createVerseLineMapper());
     }
