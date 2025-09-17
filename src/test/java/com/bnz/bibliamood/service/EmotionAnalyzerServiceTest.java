@@ -9,7 +9,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 class EmotionAnalyzerServiceTest {
 
     @Test
-    void testMappingEnglishLabel() throws Exception {
+    void testMappingEnglishLabel() {
         EmotionAnalyzerService service = new EmotionAnalyzerService();
         ReflectionTestUtils.setField(service, "modelsEnabled", false);
         // joy -> JOY
@@ -19,7 +19,7 @@ class EmotionAnalyzerServiceTest {
     }
 
     @Test
-    void testMappingFrenchSentimentStars() throws Exception {
+    void testMappingFrenchSentimentStars() {
         EmotionAnalyzerService service = new EmotionAnalyzerService();
         ReflectionTestUtils.setField(service, "modelsEnabled", false);
         assertThat(service.mapLabelForTest("1 star", "fr")).isEqualTo("TRISTESSE");
@@ -53,7 +53,7 @@ class EmotionAnalyzerServiceTest {
     }
 
     @Test
-    void testAnalyzeTopWithThreshold() throws Exception {
+    void testAnalyzeTopWithThreshold() {
         EmotionAnalyzerService service = new EmotionAnalyzerService();
         ReflectionTestUtils.setField(service, "modelsEnabled", false);
 
