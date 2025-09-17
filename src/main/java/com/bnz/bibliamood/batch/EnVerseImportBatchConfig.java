@@ -20,7 +20,6 @@ import org.springframework.batch.item.file.LineMapper;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.io.ClassPathResource;
 import org.springframework.transaction.PlatformTransactionManager;
 
 import java.util.ArrayList;
@@ -29,85 +28,27 @@ import java.util.Map;
 
 @Configuration
 @RequiredArgsConstructor
-public class EnVerseImportBatchConfig {
+public class EnVerseImportBatchConfig extends BaseVerseImportBatchConfig {
 
     private final VerseRepository verseRepository;
 
 
     @Bean(name = "EnVerseItemReader")
     public FlatFileItemReader<Verse> verseItemReader() {
-        FlatFileItemReader<Verse> reader = new FlatFileItemReader<>();
-        reader.setResource(new ClassPathResource("bible_csv/kjv_strongs.csv"));
-        reader.setLinesToSkip(1);
-        reader.setLineMapper(verseLineMapper());
-        return reader;
-    }
-
-    public LineMapper<Verse> verseLineMapper() {
-        return (line, lineNumber) -> {
-            CSVFormat format = CSVFormat.DEFAULT.builder()
-                    .setQuote('"')
-                    .setIgnoreSurroundingSpaces(true)
-                    .setTrim(true)
-                    .build();
-
-            CSVRecord record;
-            try (CSVParser parser = CSVParser.parse(line, format)) {
-                record = parser.iterator().next();
-            } catch (Exception e) {
-                throw new RuntimeException("Error parsing CSV at line " + lineNumber, e);
-            }
-
-            // Validate column count
-            if (record.size() < 6) {
-                throw new IllegalArgumentException("Invalid CSV format: insufficient columns at line " + lineNumber);
-            }
-
-            // Compléter les colonnes manquantes
-            List<String> cols = new ArrayList<>();
-            record.forEach(cols::add);
-
-            Verse verse = new Verse();
-            verse.setBook(cols.get(1));
-            verse.setBookNumber(Integer.valueOf(cols.get(2)));
-            verse.setChapter(Integer.valueOf(cols.get(3)));
-            verse.setVerseNumber(Integer.valueOf(cols.get(4)));
-            verse.setText(cols.get(5));
-            return verse;
-        };
+        return createReader("bible_csv/kjv_strongs.csv", createVerseLineMapper());
     }
 
 
     @Bean(name = "enVerseItemWriter")
     public RepositoryItemWriter<Verse> verseItemWriter() {
-        RepositoryItemWriter<Verse> writer = new RepositoryItemWriter<>();
-        writer.setRepository(verseRepository);
-        writer.setMethodName("save");
-        return writer;
+        return createWriter(verseRepository);
     }
 
     @Bean
     public ItemProcessor<Verse, Verse> enVerseProcessor() {
-        return verse -> {
-            Map<String, String> codeToName = BibleMappings.getCodeToNameMapping("en");
-            Map<String, Integer> codeToNumber = BibleMappings.getCodeToNumberMapping();
-
-            if (verse.getBookCode() != null) {
-                verse.setBook(codeToName.get(verse.getBookCode()));
-                verse.setBookNumber(codeToNumber.get(verse.getBookCode()));
-            } else {
-                verse.setBookCode(
-                        codeToName.entrySet().stream()
-                                .filter(e -> e.getValue().equalsIgnoreCase(verse.getBook()))
-                                .map(Map.Entry::getKey)
-                                .findFirst()
-                                .orElse(null)
-                );
-            }
-            verse.setLanguage("en");
-            verse.setVersion("KJV");
-            return verse;
-        };
+        return verse -> processVerse(verse, "en", "KJV",
+                BibleMappings.getCodeToNameMapping("en"),
+                BibleMappings.getCodeToNumberMapping());
     }
 
 

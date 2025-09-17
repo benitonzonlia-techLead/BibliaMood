@@ -3,6 +3,7 @@ package com.bnz.bibliamood.batch;
 import com.bnz.bibliamood.data.entity.Verse;
 import com.bnz.bibliamood.data.repository.VerseEmotionRepository;
 import com.bnz.bibliamood.data.repository.VerseRepository;
+import com.bnz.bibliamood.util.BibleMappings;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.batch.core.Job;
@@ -88,7 +89,10 @@ class EnVerseImportBatchConfigTest {
         input.setVerseNumber(1);
         input.setText("In the beginning, God{H430} created the heaven and the earth.");
 
-        Verse output = new FrVerseImportBatchConfig(verseRepository).frVerseProcessor().process(input);
+        Verse output = new BaseVerseImportBatchConfig() {
+        }.processVerse(input, "en", "KJV",
+                BibleMappings.getCodeToNameMapping("en"),
+                BibleMappings.getCodeToNumberMapping());
 
         assertThat(output).isNotNull();
         assertThat(output.getBook()).isEqualTo("Genesis");
@@ -100,13 +104,13 @@ class EnVerseImportBatchConfigTest {
         // Ligne volontairement malformée : guillemet non fermé
         String malformedLine = "\"Unclosed quote,Genesis,1,1,1,In the beginning";
 
-        LineMapper<Verse> lineMapper = new EnVerseImportBatchConfig(verseRepository).verseLineMapper();
+        LineMapper<Verse> lineMapper = new BaseVerseImportBatchConfig() {
+        }.createVerseLineMapper();
 
         assertThatThrownBy(() -> lineMapper.mapLine(malformedLine, 3))
                 .isInstanceOf(RuntimeException.class)
                 .hasMessageContaining("Error parsing CSV at line 3");
     }
-
 
     @Test
     void testInvalidCsvFormatThrowsIllegalArgumentException() {
@@ -114,7 +118,8 @@ class EnVerseImportBatchConfigTest {
         String invalidLine = "1,Genesis,1,1";
 
         // Instanciation du LineMapper (sans dépendance au repository ici)
-        LineMapper<Verse> lineMapper = new EnVerseImportBatchConfig(verseRepository).verseLineMapper();
+        LineMapper<Verse> lineMapper = new BaseVerseImportBatchConfig() {
+        }.createVerseLineMapper();
 
         // Vérification que l'exception attendue est levée
         assertThatThrownBy(() -> lineMapper.mapLine(invalidLine, 2))
