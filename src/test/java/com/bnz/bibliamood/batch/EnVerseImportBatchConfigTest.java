@@ -3,6 +3,7 @@ package com.bnz.bibliamood.batch;
 import com.bnz.bibliamood.data.entity.Verse;
 import com.bnz.bibliamood.data.repository.VerseEmotionRepository;
 import com.bnz.bibliamood.data.repository.VerseRepository;
+import com.bnz.bibliamood.exception.BibliaMoodException;
 import com.bnz.bibliamood.util.BibleMappings;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -100,7 +101,7 @@ class EnVerseImportBatchConfigTest {
     }
 
     @Test
-    void testMalformedCsvThrowsRuntimeException() {
+    void testMalformedCsvThrowsBibliaMoodException() {
         // Ligne volontairement malformée : guillemet non fermé
         String malformedLine = "\"Unclosed quote,Genesis,1,1,1,In the beginning";
 
@@ -108,7 +109,7 @@ class EnVerseImportBatchConfigTest {
         }.createVerseLineMapper();
 
         assertThatThrownBy(() -> lineMapper.mapLine(malformedLine, 3))
-                .isInstanceOf(RuntimeException.class)
+                .isInstanceOf(BibliaMoodException.class)
                 .hasMessageContaining("Error parsing CSV at line 3");
     }
 
@@ -117,13 +118,11 @@ class EnVerseImportBatchConfigTest {
         // Ligne avec seulement 4 colonnes
         String invalidLine = "1,Genesis,1,1";
 
-        // Instanciation du LineMapper (sans dépendance au repository ici)
         LineMapper<Verse> lineMapper = new BaseVerseImportBatchConfig() {
         }.createVerseLineMapper();
 
-        // Vérification que l'exception attendue est levée
-        assertThatThrownBy(() -> lineMapper.mapLine(invalidLine, 2))
+        assertThatThrownBy(() -> lineMapper.mapLine(invalidLine, 4))
                 .isInstanceOf(IllegalArgumentException.class)
-                .hasMessageContaining("Invalid CSV format");
+                .hasMessageContaining("Invalid CSV format: insufficient columns at line 4");
     }
 }

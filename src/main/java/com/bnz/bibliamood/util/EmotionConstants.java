@@ -1,5 +1,7 @@
 package com.bnz.bibliamood.util;
 
+import com.bnz.bibliamood.exception.BibliaMoodException;
+
 import java.util.Map;
 
 public class EmotionConstants {
@@ -10,7 +12,7 @@ public class EmotionConstants {
 
     // Private constructor to prevent instantiation
     private EmotionConstants() {
-        throw new UnsupportedOperationException("Utility class");
+        throw new BibliaMoodException("Utility class");
     }
 
     // Mapping labels -> codes internes

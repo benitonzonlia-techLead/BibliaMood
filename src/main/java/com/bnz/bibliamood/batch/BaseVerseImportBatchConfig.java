@@ -2,6 +2,7 @@ package com.bnz.bibliamood.batch;
 
 import com.bnz.bibliamood.data.entity.Verse;
 import com.bnz.bibliamood.data.repository.VerseRepository;
+import com.bnz.bibliamood.exception.BibliaMoodException;
 import org.springframework.batch.item.data.RepositoryItemWriter;
 import org.springframework.batch.item.file.FlatFileItemReader;
 import org.springframework.batch.item.file.LineMapper;
@@ -44,7 +45,7 @@ public abstract class BaseVerseImportBatchConfig {
             try (CSVParser parser = CSVParser.parse(line, format)) {
                 rec = parser.iterator().next();
             } catch (Exception e) {
-                throw new RuntimeException("Error parsing CSV at line " + lineNumber, e);
+                throw new BibliaMoodException("Invalid CSV format at line " + lineNumber);
             }
 
             if (rec.size() < 6) {

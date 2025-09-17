@@ -7,6 +7,7 @@ import ai.djl.repository.zoo.Criteria;
 import ai.djl.repository.zoo.ModelZoo;
 import ai.djl.repository.zoo.ZooModel;
 import ai.djl.translate.TranslateException;
+import com.bnz.bibliamood.exception.BibliaMoodException;
 import com.bnz.bibliamood.util.EmotionConstants;
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.PreDestroy;
@@ -44,7 +45,7 @@ public class EmotionAnalyzerService {
                     .build());
 
         } catch (IOException | ModelException e) {
-            throw new IllegalStateException("Erreur chargement modèles d'émotion", e);
+            throw new BibliaMoodException("Erreur chargement modèles d'émotion", e);
         }
     }
 
@@ -85,11 +86,11 @@ public class EmotionAnalyzerService {
 
     private ZooModel<String, Classifications> selectModel(String language) {
         if (!modelsEnabled) {
-            throw new IllegalStateException("Models disabled (emotion.models.enabled=false)");
+            throw new BibliaMoodException("Models disabled (emotion.models.enabled=false)");
         }
         if ("en".equalsIgnoreCase(language)) return englishModel;
         if ("fr".equalsIgnoreCase(language)) return frenchModel;
-        throw new IllegalArgumentException("Unsupported language: " + language);
+        throw new BibliaMoodException("Unsupported language: " + language);
     }
 
     private static final Map<String, String> FR_KEYWORDS;

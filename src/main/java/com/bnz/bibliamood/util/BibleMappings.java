@@ -1,12 +1,14 @@
 package com.bnz.bibliamood.util;
 
+import com.bnz.bibliamood.exception.BibliaMoodException;
+
 import java.util.Map;
 
 public class BibleMappings {
 
     // Private constructor to prevent instantiation
     private BibleMappings() {
-        throw new UnsupportedOperationException("Utility class");
+        throw new BibliaMoodException("Utility class");
     }
 
     public static Map<String, Integer> getCodeToNumberMapping() {
